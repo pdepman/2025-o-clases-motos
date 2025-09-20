@@ -147,7 +147,7 @@ class Moto {
   method esFachera() = indiceFacha >= 60
   
   method acelerarHasta(velocidad) {
-    // Veamos si alguno propone una excepcion aca que diga (velocidadActual + velocidad) > velocidadMaxima entonces throw
+    // Veamos si alguno propone una excepcion aca que diga velocidad > velocidadMaxima entonces throw
     // u otra que pida primero que haya arrancado la moto
     const constanteK = ((pi * radioRuedas) * 60) / 1000
     const rpm = velocidad / constanteK
