@@ -1,64 +1,67 @@
-object sportster {
-  const property marca = "Harley-Davidson"
-  const property velocidadMaxima = 180
-  const property indiceFacha = 100
-  
-  method esFachera() = indiceFacha >= 60
-}
 
-object elettrica {
-  const property marca = "Vespa"
-  const property velocidadMaxima = 45
-  const property indiceFacha = 1
+// object sportster {
+//   const marca = "Harley-Davidson"
+//   const velocidadMaxima = 180
+//   const indiceFacha = 100
   
-  method esFachera() = indiceFacha >= 60
-}
+//   method esFachera() = indiceFacha >= 60
+// }
 
-object himalayan {
-  const property marca = "Royal Enfield"
-  const property velocidadMaxima = 165
-  const property indiceFacha = 50
+// object elettrica {
+//   const marca = "Vespa"
+//   const velocidadMaxima = 45
+//   const indiceFacha = 1
   
-  method esFachera() = indiceFacha >= 60
-}
+//   method esFachera() = indiceFacha >= 60
+// }
 
-object d916 {
-  const property marca = "Ducati"
-  const property velocidadMaxima = 260
-  const property indiceFacha = 80
+// object himalayan {
+//   const marca = "Royal Enfield"
+//   const velocidadMaxima = 165
+//   const indiceFacha = 50
   
-  method esFachera() = indiceFacha >= 60
-}
+//   method esFachera() = indiceFacha >= 60
+// }
 
-object matias {
-  var property motos = [elettrica, himalayan]
+// object d916 {
+//   const marca = "Ducati"
+//   const velocidadMaxima = 260
+//   const indiceFacha = 80
   
-  method comprarMoto(moto) {
-    motos.add(moto)
-  }
-  
-  method tieneMotoFachera() = motos.any({ moto => moto.esFachera() })
-}
+//   method esFachera() = indiceFacha >= 60
+// }
 
-object valen {
-  var property motos = [sportster]
+// object matias {
+//   const motos = [elettrica, himalayan]
   
-  method comprarMoto(moto) {
-    motos.add(moto)
-  }
+//   method comprarMoto(moto) {
+//     motos.add(moto)
+//   }
   
-  method tieneMotoFachera() = motos.any({ moto => moto.esFachera() })
-}
+//   method tieneMotoFachera() = motos.any({ moto => moto.esFachera() })
+// }
 
-object naza {
-  var property motos = [himalayan, d916]
+// object valen {
+//   const motos = [sportster]
   
-  method comprarMoto(moto) {
-    motos.add(moto)
-  }
+//   method comprarMoto(moto) {
+//     motos.add(moto)
+//   }
   
-  method tieneMotoFachera() = motos.any({ moto => moto.esFachera() })
-} // Que quilombo!! ¿Se puede hacer mejor?
+//   method tieneMotoFachera() = motos.any({ moto => moto.esFachera() })
+// }
+
+// object naza {
+//   var property motos = [himalayan, d916]
+  
+//   method comprarMoto(moto) {
+//     motos.add(moto)
+//   }
+  
+//   method tieneMotoFachera() = motos.any({ moto => moto.esFachera() })
+// } 
+
+// Que quilombo!! ¿Se puede hacer mejor?
 
 // Claro que si! Usando moldes, osea digamos clases
 // class Moto {
@@ -69,7 +72,7 @@ object naza {
 //   method esFachera() = indiceFacha >= 60
 // }
 class Motoquero {
-  var property motos
+  const property motos
   
   method comprarMoto(moto) {
     motos.add(moto)
@@ -105,37 +108,57 @@ class Motoquero {
 // Bla bla bla teorico
 // Pongamoslo a prueba
 class Motor {
-  const tanqueNafta
+  const pistones = [new Piston(), new Piston()]
   var desgaste = 0
   
+  method generarMasTorque(rpm) {
+    pistones.forEach({ piston => piston.moverse(rpm / 2) })
+    desgaste += 1
+  }
+  
   method iniciarCombustion() {
-    tanqueNafta.gastarCombustible()
+    pistones.forEach({ piston => piston.moverse(1200) })
     desgaste += 5
   }
 }
 
-class TanqueNafta {
-  var combustible = 100
+class Piston {
+  var desgaste = 0
   
-  method gastarCombustible() = if (combustible < 10) {
-    throw new Exception(message = "No hay suficiente combustible")
-  } else {
-    combustible -= 10
+  method moverse(revoluciones) {
+    if (desgaste == 100) {
+      throw new Exception(message = "El piston está roto")
+    } else {
+      desgaste += 10
+    }
   }
 }
 
+const pi = 3.14
+
 class Moto {
-  const property marca
-  const property velocidadMaxima
-  const property indiceFacha
-  const property motor
+  const marca
+  const velocidadMaxima
+  const indiceFacha
+  const radioRuedas
+  const motor = new Motor()
   var property velocidadActual = 0
   
   method esFachera() = indiceFacha >= 60
   
+  method acelerarHasta(velocidad) {
+    // Veamos si alguno propone una excepcion aca que diga (velocidadActual + velocidad) > velocidadMaxima entonces throw
+    // u otra que pida primero que haya arrancado la moto
+    const constanteK = ((pi * radioRuedas) * 60) / 1000
+    const rpm = velocidad / constanteK
+    
+    motor.generarMasTorque(rpm)
+    self.velocidadActual(velocidad)
+  }
+  
   method arrancar() {
     motor.iniciarCombustion()
-    velocidadActual = 10
+    self.velocidadActual(10)
   }
 }
 
@@ -143,37 +166,42 @@ const sportster2 = new Moto(
   marca = "Harley-Davidson",
   velocidadMaxima = 180,
   indiceFacha = 100,
-  motor = new Motor(tanqueNafta = new TanqueNafta())
+  radioRuedas = 22
 )
 
 const elettrica2 = new Moto(
   marca = "Vespa",
   velocidadMaxima = 45,
   indiceFacha = 1,
-  motor = new Motor(tanqueNafta = new TanqueNafta())
+  radioRuedas = 27
 )
 
-const himalayan2 = new Moto(
+const himalayanNaza = new Moto(
   marca = "Royal Enfield",
   velocidadMaxima = 165,
   indiceFacha = 50,
-  motor = new Motor(tanqueNafta = new TanqueNafta())
+  radioRuedas = 24
+)
+
+const himalayanMatias = new Moto(
+  marca = "Royal Enfield",
+  velocidadMaxima = 165,
+  indiceFacha = 50,
+  radioRuedas = 24
 )
 
 const d9162 = new Moto(
   marca = "Ducati",
   velocidadMaxima = 260,
   indiceFacha = 80,
-  motor = new Motor(tanqueNafta = new TanqueNafta())
+  radioRuedas = 21.5
 )
 
-const matias2 = new Motoquero(motos = [elettrica2, himalayan2])
+const matias2 = new Motoquero(motos = [elettrica2, himalayanMatias])
 
 const valen2 = new Motoquero(motos = [sportster2])
 
-const naza2 = new Motoquero(motos = [himalayan2, d9162]) // Ojo que naza y matias usan la misma moto
-
+const naza2 = new Motoquero(motos = [d9162, himalayanNaza])
 // Podemos preguntarles donde mas creen que podriamos agregar este tipo de excepciones
 // Por ejemplo: velocidadActual <= velocidadMaxima (Velocidad maxima alcanzada) ; desgaste <= 100 (Motor roto)
-
 // Finalmente diagrama de clases
