@@ -71,6 +71,9 @@
 //   
 //   method esFachera() = indiceFacha >= 60
 // }
+
+
+//!POST CLASES
 class Motoquero {
   const property motos
   
@@ -79,40 +82,46 @@ class Motoquero {
   }
   
   method tieneMotoFachera() = motos.any({ moto => moto.esFachera() })
-} // const sportster2 = new Moto(
+} 
 
-//   marca = "Harley-Davidson",
-//   velocidadMaxima = 180,
-//   indiceFacha = 100
-// )
-// const elettrica2 = new Moto(
-//   marca = "Vespa",
-//   velocidadMaxima = 45,
-//   indiceFacha = 1
-// )
-// const himalayan2 = new Moto(
-//   marca = "Royal Enfield",
-//   velocidadMaxima = 165,
-//   indiceFacha = 50
-// )
-// const d9162 = new Moto(
-//   marca = "Ducati",
-//   velocidadMaxima = 260,
-//   indiceFacha = 80
-// )
-// const matias2 = new Motoquero(motos = [elettrica2, himalayan2])
-// const valen2 = new Motoquero(motos = [sportster2])
-// const naza2 = new Motoquero(motos = [himalayan2, d9162])
-// ¡Excelente! Ahora nos gustaria introducir el concepto de Excepciones
-// ¿Qué es una excepcion?
-// Bla bla bla teorico
-// Pongamoslo a prueba
+class Moto {
+  const marca
+  const velocidadMaxima
+  var estaEncendida = false
+  const motor = new Motor(constanteDeRevolucion = 40)
+  var property velocidadActual = 0
+
+  method esFachera() = self.indiceFacha() >= 600
+
+  method indiceFacha() = velocidadMaxima * marca.length()
+  
+  method arrancar() {
+    motor.iniciarCombustion()
+    self.velocidadActual(10)
+    estaEncendida = true
+  }
+
+  method acelerar(velocidad) {
+    // Veamos si alguno propone una excepcion aca que diga:
+    // velocidad > velocidadMaxima => throw
+    // velocidad < 0 => throw
+    // cambiar velocidadActual sin prender la moto => throw
+    // Esto se hace despues de lo de los pistones, a ver si se avivan
+    // Si usaron property, cayeron en la trap (no pueden validar)
+    
+    motor.exigir(velocidad)
+    velocidadActual = velocidad
+  }
+}
+
+// 
 class Motor {
   const pistones = [new Piston(), new Piston()]
   var desgaste = 0
+  const constanteDeRevolucion
   
-  method generarMasTorque(rpm) {
-    pistones.forEach({ piston => piston.moverse(rpm / 2) })
+  method exigir(velocidad) {
+    pistones.forEach({ piston => piston.moverse(velocidad * constanteDeRevolucion) })
     desgaste += 1
   }
   
@@ -120,81 +129,49 @@ class Motor {
     pistones.forEach({ piston => piston.moverse(1200) })
     desgaste += 5
   }
+
+  method desgaste(){
+    return desgaste
+  }
 }
 
 class Piston {
   var desgaste = 0
   
   method moverse(revoluciones) {
-    if (desgaste == 100) {
+    if (desgaste >= 100) {
       throw new Exception(message = "El piston está roto")
     } else {
-      desgaste += 10
+      desgaste += 10 * revoluciones / 1000
     }
   }
 }
 
 const pi = 3.14
 
-class Moto {
-  const marca
-  const velocidadMaxima
-  const indiceFacha
-  const radioRuedas
-  const motor = new Motor()
-  var property velocidadActual = 0
-  
-  method esFachera() = indiceFacha >= 60
-  
-  method acelerarHasta(velocidad) {
-    // Veamos si alguno propone una excepcion aca que diga velocidad > velocidadMaxima entonces throw
-    // u otra que pida primero que haya arrancado la moto
-    const constanteK = ((pi * radioRuedas) * 60) / 1000
-    const rpm = velocidad / constanteK
-    
-    motor.generarMasTorque(rpm)
-    self.velocidadActual(velocidad)
-  }
-  
-  method arrancar() {
-    motor.iniciarCombustion()
-    self.velocidadActual(10)
-  }
-}
-
 const sportster2 = new Moto(
   marca = "Harley-Davidson",
-  velocidadMaxima = 180,
-  indiceFacha = 100,
-  radioRuedas = 22
+  velocidadMaxima = 180
 )
 
 const elettrica2 = new Moto(
   marca = "Vespa",
-  velocidadMaxima = 45,
-  indiceFacha = 1,
-  radioRuedas = 27
+  velocidadMaxima = 45
 )
 
 const himalayanNaza = new Moto(
   marca = "Royal Enfield",
-  velocidadMaxima = 165,
-  indiceFacha = 50,
-  radioRuedas = 24
+  velocidadMaxima = 165
 )
 
 const himalayanMatias = new Moto(
   marca = "Royal Enfield",
-  velocidadMaxima = 165,
-  indiceFacha = 50,
-  radioRuedas = 24
+  velocidadMaxima = 165
 )
 
 const d9162 = new Moto(
   marca = "Ducati",
-  velocidadMaxima = 260,
-  indiceFacha = 80,
-  radioRuedas = 21.5
+  velocidadMaxima = 260
 )
 
 const matias2 = new Motoquero(motos = [elettrica2, himalayanMatias])
